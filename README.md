@@ -2,6 +2,8 @@
 
 O projeto é um site desktop para montar planos de viagem com amigos, registrar atividades e links úteis.
 
+![image](https://github.com/Azanniel/planner-react/assets/71537090/1ae6719c-0fcd-49b3-9c94-47d82bdaaf9e)
+
 ## 🚀 Como Usar
 
 Após clonar o repositório, acesse a pasta do projeto e execute os comandos abaixo:
