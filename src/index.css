@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+.rdp {
+  --rdp-accent-color: theme(colors.lime.300) !important;
+  --rdp-selected-color: theme(colors.zinc.800) !important;
+  --rdp-background-color: theme(colors.zinc.800) !important;
+}
+
 * {
   min-width: 0;
 }
