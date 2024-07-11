@@ -10,18 +10,22 @@ import { Button } from '../../../components/button'
 
 interface DestinationAndDateStepProps {
   isGuestsInputOpen: boolean
+  startAndEndDates?: DateRange
+  setDestination: (value: string) => void
+  setStartAndEndDates: (value?: DateRange) => void
   openGuestsInput: () => void
   closeGuestsInput: () => void
 }
 
 export function DestinationAndDateStep({
   isGuestsInputOpen,
+  startAndEndDates,
+  setDestination,
+  setStartAndEndDates,
   openGuestsInput,
   closeGuestsInput,
 }: DestinationAndDateStepProps) {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
-  const [eventStartAndEndDates, setEventStartAndEndDates] =
-    useState<DateRange>()
 
   function openDatePicker() {
     setIsDatePickerOpen(true)
@@ -33,17 +37,13 @@ export function DestinationAndDateStep({
 
   let displayedDate = null
 
-  if (
-    eventStartAndEndDates &&
-    eventStartAndEndDates.from &&
-    eventStartAndEndDates.to
-  ) {
-    displayedDate = format(eventStartAndEndDates.from, "d' de 'LLL", {
+  if (startAndEndDates && startAndEndDates.from && startAndEndDates.to) {
+    displayedDate = format(startAndEndDates.from, "d' de 'LLL", {
       locale: ptBR,
     })
       .concat(' até ')
       .concat(
-        format(eventStartAndEndDates.to, "d' de 'LLL", {
+        format(startAndEndDates.to, "d' de 'LLL", {
           locale: ptBR,
         }),
       )
@@ -58,6 +58,7 @@ export function DestinationAndDateStep({
           type="text"
           placeholder="Para onde você vai?"
           disabled={isGuestsInputOpen}
+          onChange={(event) => setDestination(event.target.value)}
         />
       </div>
 
@@ -97,8 +98,8 @@ export function DestinationAndDateStep({
             <DayPicker
               mode="range"
               locale={ptBR}
-              selected={eventStartAndEndDates}
-              onSelect={setEventStartAndEndDates}
+              selected={startAndEndDates}
+              onSelect={setStartAndEndDates}
             />
 
             <Button size="full" onClick={closeDatePicker}>

@@ -1,6 +1,8 @@
 import { FormEvent, useState } from 'react'
+import type { DateRange } from 'react-day-picker'
 import { useNavigate } from 'react-router-dom'
 
+import { api } from '../../lib/axios'
 import { ConfirmTripModal } from './confirm-trip-modal'
 import { InviteGuestsModal } from './invite-guests-modal'
 import { DestinationAndDateStep } from './steps/destination-and-date-step'
@@ -11,6 +13,8 @@ export function CreateTripPage() {
   const [isGuestsModalOpen, setIsGuestsModalOpen] = useState(false)
   const [isConfirmTripModalOpen, setIsConfirmTripModalOpen] = useState(false)
 
+  const [destination, setDestination] = useState('')
+  const [startAndEndDates, setStartAndEndDates] = useState<DateRange>()
   const [emailsToInvite, setEmailsToInvite] = useState<string[]>([])
 
   const navigate = useNavigate()
@@ -66,10 +70,46 @@ export function CreateTripPage() {
     setEmailsToInvite(emailsWithoutOneRemoved)
   }
 
-  function createTrip(event: FormEvent<HTMLFormElement>) {
+  async function createTrip(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    navigate('/trips/123')
+    const formData = new FormData(event.currentTarget)
+
+    if (!destination) {
+      return
+    }
+
+    if (!startAndEndDates?.from || !startAndEndDates?.to) {
+      return
+    }
+
+    if (emailsToInvite.length === 0) {
+      return
+    }
+
+    const ownerName = formData.get('name')?.toString()
+    const ownerEmail = formData.get('email')?.toString()
+
+    if (!ownerName || !ownerEmail) {
+      return
+    }
+
+    try {
+      const response = await api.post('/trips', {
+        destination,
+        starts_at: startAndEndDates.from,
+        ends_at: startAndEndDates.to,
+        emails_to_invite: emailsToInvite,
+        owner_name: ownerName,
+        owner_email: ownerEmail,
+      })
+
+      const { tripId } = response.data
+
+      navigate(`/trips/${tripId}`)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
@@ -86,8 +126,11 @@ export function CreateTripPage() {
         <div className="space-y-4">
           <DestinationAndDateStep
             isGuestsInputOpen={isGuestsInputOpen}
+            startAndEndDates={startAndEndDates}
             openGuestsInput={openGuestsInput}
             closeGuestsInput={closeGuestsInput}
+            setDestination={setDestination}
+            setStartAndEndDates={setStartAndEndDates}
           />
 
           {isGuestsInputOpen && (
